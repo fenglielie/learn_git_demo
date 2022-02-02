@@ -120,7 +120,7 @@ git checkout -b new_branch
 
 现在，”提交2“和”提交3“都是直接基于”提交1“的，两者没有明确的继承关系，提交链表产生分叉。
 
-![advance-master](D:\coderoot\learn_git\learn_git_enhanced_images\advance-master.png)
+![advance-master](learn_git_enhanced_images/advance-master.png)
 
 适用情景
 
@@ -128,7 +128,7 @@ master指向现在的成熟版本，新建一个分支isss53，在iss53分支处
 
 正在处理的时候，遇到加急的问题hotfix，和iss53相互独立，则回退过去，新建一个分叉hotfix/iss53，解决完成后，可以回退到master->iss53这条路线，这是主要工作。
 
-![basic-branching-4](D:\coderoot\learn_git\learn_git_enhanced_images\basic-branching-4.png)
+![basic-branching-4](learn_git_enhanced_images/basic-branching-4.png)
 
 
 
@@ -145,13 +145,13 @@ git merge hotfix
 
 
 
-![basic-branching-5](D:\coderoot\learn_git\learn_git_enhanced_images\basic-branching-5.png)
+![basic-branching-5](learn_git_enhanced_images/basic-branching-5.png)
 
 #### 分叉无冲突合并：
 
 例如以下状态
 
-![basic-merging-1](D:\coderoot\learn_git\learn_git_enhanced_images\basic-merging-1.png)
+![basic-merging-1](learn_git_enhanced_images/basic-merging-1.png)
 
 当前HEAD处于master分支位于**C4**，还有一个分支iss53**C5**，它们没有先后关系，但是存在一个公共祖先**C2**，这种情景下，我们希望两个分支可以合并。
 
@@ -162,7 +162,7 @@ git checkout master
 git merge iss53
 ```
 
-![basic-merging-2](D:\coderoot\learn_git\learn_git_enhanced_images\basic-merging-2.png)
+![basic-merging-2](learn_git_enhanced_images/basic-merging-2.png)
 
 合并后，如果没有冲突，则自动创建一个新提交节点，提交结点自带一个merge标签，表明是那两个结点合并而来，不妨称作**merge提交结点**。
 
@@ -237,13 +237,13 @@ git branch --no-merged main //相对于main主分支，哪些分支未合并
 
 风格一，长期分支，main标记稳定版，长期滞后于开发，只有在新版本稳定后让main跟上进度。
 
-![lr-branches-1](D:\coderoot\learn_git\learn_git_enhanced_images\lr-branches-1.png)
+![lr-branches-1](learn_git_enhanced_images/lr-branches-1.png)
 
 
 
 风格二，主题分支，以问题或扩展功能为导向，在实现后合并到main中
 
-![topic-branches-1](D:\coderoot\learn_git\learn_git_enhanced_images\topic-branches-1.png)
+![topic-branches-1](learn_git_enhanced_images/topic-branches-1.png)
 
 
 
@@ -259,7 +259,7 @@ clone行为的本质：
 
 用origin指代远程仓库，拉取所有数据到本地，默认与远程仓库的main分支一样创造一个本地的origin/main分支，同时在本地创造一个main分支，也就是我们所在的并且可以移动的分支。相对的origin/main我们不可以直接移动，只会在联网时基于网络信息发生更改。
 
-![remote-branches-1](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-1.png)
+![remote-branches-1](learn_git_enhanced_images/remote-branches-1.png)
 
 注意：
 
@@ -278,7 +278,7 @@ git fetch origin
 
 表示从远程仓库抓取信息，照着远程仓库的信息延申提交链表，origin/main随之移动。
 
-![remote-branches-3](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-3.png)
+![remote-branches-3](learn_git_enhanced_images/remote-branches-3.png)
 
 很自然的，如果远程仓库发送了别的修改提交，而本地也进行了提交，则会产生分叉。
 
@@ -286,7 +286,7 @@ git fetch origin
 
 除此之外，可以添加多个远程仓库，例如下图
 
-![remote-branches-5](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-5.png)
+![remote-branches-5](learn_git_enhanced_images/remote-branches-5.png)
 
 
 
