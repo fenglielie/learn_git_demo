@@ -47,8 +47,6 @@
 
 
 
-
-
 ## 2. Git 初始化配置
 
 配置目录包括三级，越具体的配置优先级越高，
@@ -95,8 +93,6 @@ git config --list
 git help <sth>
 git sth --help
 ```
-
-
 
 
 
@@ -166,8 +162,6 @@ git commit -a //自动首先进行git add，从而跳过这一步
 
 
 
-
-
 ### 3.2 忽略文件
 
 在本地目录下，使用.gitignore文件配置忽略文件，建议在仓库初始化以后立刻添加该文件。
@@ -230,8 +224,6 @@ git log --pretty=format:"%h - [%cn,%ce] %ar : %s"
 
 
 
-
-
 ### 3.5 移动文件
 
 由于Git基于文件内容的哈希值去索引文件，重命名文件会被智能识别出来。
@@ -249,7 +241,33 @@ git add file_to
 
 ## 4. Git 撤销操作
 
-### 4.1 修正上一次提交
+在Git系统中，所有已提交的信息，几乎都是可以进行恢复的。
+
+
+
+### 4.1 从缓存区撤回
+
+如果对当前的文件a.txt新的修改，已经add到了缓存区，但是又希望撤回这个缓存，比如安排在下一次提交，则可以
+
+```
+git reset HEAD a.txt
+```
+
+这个操作会把仓库记录中，a.txt的文件记录指针回退到上一个已提交文件，从而相当于清除了a.txt的缓存。
+
+
+
+### 4.2 新修改文件回退
+
+现在的状态是：在本地目录中的新修改文件a.txt，希望回退到Git 记录下的上一个已提交版本，从而消除这次失败的本地新修改。
+
+```
+git checkout -- a.txt
+```
+
+
+
+### 4.3 对上一次提交修正
 
 如果刚刚进行了提交，但是有几个文件没有进行修改补充，或者提交信息写错了，则可以使用下列命令补丁
 
@@ -257,141 +275,210 @@ git add file_to
 git commit --amend
 ```
 
-此时，会把现在的缓存区内容也加上去提交，并且重新调出编辑器，修改message
+此时，会把现在的缓存区内容也加上去提交，并且重新调出编辑器，修改message。
 
 
 
+## 5. Git 远程仓库基础
 
+### 5.1 建立仓库与远程仓库的对应
 
-
-
-## 建立仓库，与远程仓库对应
-
-建立本地仓库
-
-```
-git init
-git add *
-git commit -m "init this project"
-```
-
-
-
-在GitHub建立远程仓库，略。
-
-将本地仓库对应到远程仓库，
-
-```
-git remote //查看现在关联的远程仓库
-git remote -v //更详细，包括链接
-
-// 把Github的新仓库关联到本地仓库，习惯上把远程分支名称记作origin
-git remote add origin git@github.com:fenglielie/learn_git_demo.git
-
-```
-
-
-
-将远程已有仓库直接克隆到本地，新建本地仓库，也可以使用一个新名字
+直接从Github 克隆一个已有仓库到本地，支持给仓库一个新名字。
 
 ```
 git clone git@github.com:fenglielie/learn_git_demo.git
 git clone git@github.com:fenglielie/learn_git_demo.git new_name
 ```
 
+这里git clone 不仅把仓库资源下载到本地，还会自动建立本地仓库和远程仓库的对应，默认远程仓库名origin。
 
 
 
-
-
-
-## 最基本，无分支操作
-
-
+查看远程仓库
 
 ```
-git add file //把file添加到暂存区，包括更改后的和新的文件
-git add *
-
-git commit //提交，会跳转到文本编辑器，书写message
-git commit -m "message" //提交，附带message
-
-git log //输出日志
-git log -2 //只输出最近的2个commit日志
-//可以按照下列单行格式，进行输出日志
-git log --pretty=format:"%h - [%cn,%ce] %ar : %s"
-
-git status //查看当前三个分区的状态
+git remote
+git remote -v //更详细，附带url
 ```
 
-注意，更多的日志格式细节可以参考https://www.w3cschool.cn/isrekq/rigk5ozt.html。
-
-
-
-### 撤销操作
-
-
-
-
-
-
-
-### 本地与远程的互动
-
-
+对已有的本地仓库，添加一个远程仓库，习惯上有名称origin
 
 ```
-git fetch
+git remote add origin git@github.com:fenglielie/learn_git_demo.git
 ```
 
 
 
-如果本地的当前分支和远程仓库的分支绑定，则可以使用下面的命令互动
+### 5.2 本地与远程仓库互动
+
+#### 5.2.1 查看远程仓库
 
 ```
-git pull //拉取远程
-git push //推送到远程
-```
+// 查看现有的远程仓库
+git remote
+git remote -v 
+git remote show
 
-它们默认执行的信息为
+// 查看特定的远程仓库，输出详细信息，
+// 包括接下来git push/ git pull 针对的默认分支
+git remote show origin
 
-```
-$ git remote show origin
 * remote origin
   Fetch URL: git@github.com:fenglielie/learn_git_demo.git
   Push  URL: git@github.com:fenglielie/learn_git_demo.git
   HEAD branch: main
   Remote branch:
     main tracked
-  Local branch configured for 'git pull': // git pull 缩写针对的两个分支
+  Local branch configured for 'git pull':
     main merges with remote main
-  Local ref configured for 'git push': // git push 缩写针对的两个分支
+  Local ref configured for 'git push':
     main pushes to main (up to date)
 ```
 
 
 
-更改远程仓库的简称，从pb1变成pb2
+#### 5.2.2 推送到远程仓库
 
 ```
-git remote rename pb1 pb2
+git push <remote> <branch>
+git push //通常可以省略
 ```
 
-移除远程仓库
+这里推送存在问题，如果和远程冲突，可能会被拒绝，需要首先接纳远程仓库的内容；而且推送涉及多人冲突，推送权限等问题。
+
+
+
+#### 5.2.3 从远程仓库抓取与拉取
+
+如果当前本地分支追踪了远程分支（在分支中详述），则可以如下简便地抓取内容并且自动尝试合并
 
 ```
-git remote rm pb
+git pull
+```
+
+如果没有，则可以使用 git fetch 命令，这里留在分支笔记中再说。
+
+
+
+#### 5.2.4 远程仓库的重命名与移除
+
+```
+git remote rename pb1 pb2 // pb1重命名未pb2
+git remote remove pb1 // 移除pb1
+```
+
+
+
+## 6. 标签与别名
+
+### 6.1 轻量标签
+
+```
+git tag //列出标签
+git tag --list “v1.*" //筛选列出标签
+```
+
+轻量标签就是对一次提交的别名/引用，默认情况下对最近一次提交打标签，提供提交的哈希值则也可以对过去的提交打轻量标签。
+
+```
+git tag v0_test //给最近一个提交打轻量标签
+git show v0_test //查看这个轻量标签
+git tag -d v0_test //-d 选项 删除这个轻量标签
+```
+
+例如
+
+```
+$ git tag v0_test
+$ git tag
+v0_test
+$ git show v0_test
+commit 54e4decf1044692643a793b1ca41a3b9aaf84b67 (HEAD -> main, tag: v0_test, origin/main)
+Author: fenglielie(local) <fenglielie@qq.com>
+Date:   Wed Feb 2 21:55:25 2022 +0800
+
+    detail
+
+diff --git a/a.txt b/a.txt
+index 8f074e8..d9dbc94 100644
+--- a/a.txt
++++ b/a.txt
+@@ -1 +1 @@
+-this is a.txt
+\ No newline at end of file
++this is a.txt,c
+\ No newline at end of file
 ```
 
 
 
 
 
-## 标签
+### 6.2 附注标签
+
+附注标签被视作一个完整对象，可以有更多的信息记录，建议使用附注标签。
+
+使用-a选项表明附注标签，使用-m选项表面附带信息。
 
 ```
-git tag //列出现有的标签
-git tag -l 'v1.*' 
+git tag -a v1 -m "version 1"
+```
+
+如果没有附带信息，则会启动编辑器输入信息，和提交一样。
+
+
+
+例如
+
+```
+$ git tag -a v1 -m "version 1"
+$ git tag
+v0_test
+v1
+$ git show v1     
+tag v1
+Tagger: fenglielie(local) <fenglielie@qq.com>
+Date:   Wed Feb 2 22:49:20 2022 +0800
+
+"version 1"
+
+commit 54e4decf1044692643a793b1ca41a3b9aaf84b67 (HEAD -> main, tag: v1, tag: v0_test, origin/main)
+Author: fenglielie(local) <fenglielie@qq.com>
+Date:   Wed Feb 2 21:55:25 2022 +0800
+
+    detail
+
+diff --git a/a.txt b/a.txt
+index 8f074e8..d9dbc94 100644
+--- a/a.txt
++++ b/a.txt
+@@ -1 +1 @@
+-this is a.txt
+\ No newline at end of file
++this is a.txt,c
+\ No newline at end of file
+```
+
+
+
+可以发现，比轻量标签多了一个message以及打标签的时间人物。
+
+
+
+除了对当前最近的一次提交，还可以针对之前的提交加上附注标签，只需要附上那次提交的哈希值。
+
+```
+git tag -a v0 -m "version 0" 53e6d315330de
+```
+
+
+
+### 传递标签到远程仓库
+
+默认情况下，git push不会把标签信息推送到远程仓库，但是可以单独进行
+
+```
+g
 ```
 
 
