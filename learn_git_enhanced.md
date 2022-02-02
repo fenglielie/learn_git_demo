@@ -269,30 +269,32 @@ origin是默认的远程仓库名称，可以在git clone时添加 -o选项指�
 
 
 
+除此之外，可以添加多个远程仓库，例如下图，这里是多个远程仓库进行fetch
+
+![remote-branches-5](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-5.png)
+
+
+
 ### 3.1 git fetch
 
 ```
-//git fetch <remote> 具体即
+git fetch <remote> //具体即origin
 git fetch origin
 ```
 
-表示从远程仓库抓取信息，照着远程仓库的信息延申提交链表，origin/main随之移动。
+表示从远程仓库抓取信息，照着远程仓库的信息延申提交链表，远程分支origin/main随之移动。
 
 ![remote-branches-3](learn_git_enhanced_images/remote-branches-3.png)
 
-很自然的，如果远程仓库发送了别的修改提交，而本地也进行了提交，则会产生分叉。
+很自然的，如果远程仓库有别的修改提交，而本地也进行了提交，则会产生分叉。
 
 
-
-除此之外，可以添加多个远程仓库，例如下图
-
-![remote-branches-5](learn_git_enhanced_images/remote-branches-5.png)
 
 
 
 ### 3.2 跟踪分支
 
-远程跟踪分支，例如origin/main，我们有本地的分支“智能地”与之跟踪。
+远程跟踪分支，例如origin/main，我们有本地的main分支“智能地”与之跟踪。
 
 它们称之为“上游分支”和“跟踪分支”，例如origin/main和main。
 
@@ -341,7 +343,7 @@ git branch --set-upstream-to origin/pb2
 
 ### 3.3 git push
 
-
+对于跟踪分支，会智能地向上游分支推送。
 
 
 
@@ -351,13 +353,13 @@ git branch --set-upstream-to origin/pb2
 
 对于跟踪分支，它会fetch上游分支到本地，然后merge本地跟踪分支。
 
-pull有些行为不太明确，因此建议单独使用git fetch和git merge
+（pull有些行为不太明确，因此建议单独使用git fetch和git merge）
 
 
 
 
 
-### 3.5 本地删除远程分支
+### 3.5 本地指挥远程仓库删除分支
 
 ```
 git push origin --delete severfix
@@ -367,11 +369,17 @@ git push origin --delete severfix
 
 
 
+### 3.6 本地分支推送到远程仓库
+
+```
+git push origin severfix
+```
+
+把本地发分支推送到远程
 
 
 
-
-
+暂停这些内容（分支，尤其是远程分支管理），进行一个版本发布的学习。
 
 
 
