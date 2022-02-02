@@ -156,13 +156,23 @@ git add filename
 
 此时如果直接git commit会把第一次修改后的提交；如果git add 会用第二次修改后的覆盖第一次修改后的，出现在缓存区，再进行git commit提交即可。
 
+提交文件
+
+```
+git commit
+git commit -m "message" //附带message
+git commit -a //自动首先进行git add，从而跳过这一步
+```
+
+
+
 
 
 ### 3.2 忽略文件
 
 在本地目录下，使用.gitignore文件配置忽略文件，建议在仓库初始化以后立刻添加该文件。
 
-可以设置用户级的默认ignore文件，用户级配置中添加下列选项，并且在对应位置附上ignore格式文件即可。
+可以设置用户级的默认 ignore 文件，用户级配置中添加下列选项，并且在对应位置新建 ignore 格式文件即可。
 
 ```
 core.excludesfile = "~/.gitignore_global"
@@ -170,7 +180,7 @@ core.excludesfile = "~/.gitignore_global"
 
 
 
-例如，这是一个仓库级的 ignore 配置
+例如，这是一个仓库级的 ignore 配置目标
 
 ```
 # 使用井号进行注释
@@ -195,7 +205,59 @@ doc/**/*.pdf
 
 
 
+### 3.3 提交历史
 
+```
+git log //输出日志
+
+git log -2 //只输出最近的2个commit日志
+
+git log --since=2.weeks //只输出最近两周的日志
+git log --since="2022-02-02" //只输出指定日期之后的
+//类似的，还有指定日期之前的 --until="2022-02-20"
+
+//可以按照下列单行格式，进行输出日志
+git log --pretty=format:"%h - [%cn,%ce] %ar : %s"
+```
+
+更多的提交历史格式信息，可以参考 [Git - 查看提交历史 (git-scm.com)](https://git-scm.com/book/zh/v2/Git-基础-查看提交历史)
+
+
+
+### 3.4 删除文件
+
+[Git - 记录每次更新到仓库 (git-scm.com)](https://git-scm.com/book/zh/v2/Git-基础-记录每次更新到仓库)
+
+
+
+
+
+### 3.5 移动文件
+
+由于Git基于文件内容的哈希值去索引文件，重命名文件会被智能识别出来。
+
+```
+git mv file_from file_to
+
+//等价于下面三条命令
+mv file_from file_to
+git rm file_from
+git add file_to
+```
+
+
+
+## 4. Git 撤销操作
+
+### 4.1 修正上一次提交
+
+如果刚刚进行了提交，但是有几个文件没有进行修改补充，或者提交信息写错了，则可以使用下列命令补丁
+
+```
+git commit --amend
+```
+
+此时，会把现在的缓存区内容也加上去提交，并且重新调出编辑器，修改message
 
 
 
