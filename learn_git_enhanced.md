@@ -99,7 +99,78 @@ git checkout -b new_branch
 
 
 
-### 2.3 分支分叉
+注意到，切换分支会直接更改本地文件夹，也就是会丢失本地所有未提交的修改信息，直接恢复到HEAD指向的提交状态。
+
+在移动分支前，建议完成提交。
+
+
+
+### 2.3 分支合并
+
+上述情景中，可能实现提交链表分叉的情形
+
+1. 在”提交1“处，有HEAD->master，新建一个分支testing
+2. HEAD->testing，在此分支上，提交一个新的结点“提交2”
+
+3. 从而 HEAD->testing 随之移动到了“提交2”，而master仍然留在"提交1"
+4. HEAD->master，回到主分支，提交一个新的结点"提交3"
+5. HEAD->testing随之移动到了"提交3"
+
+现在，”提交2“和”提交3“都是直接基于”提交1“的，两者没有明确的继承关系，提交链表产生分叉。
+
+![advance-master](D:\coderoot\learn_git\learn_git_enhanced_images\advance-master.png)
+
+适用情景
+
+master指向现在的成熟版本，新建一个分支isss53，在iss53分支处理这个问题，也就是下一版的更新内容，如果没有处理好，就不把master移动过去。
+
+正在处理的时候，遇到加急的问题hotfix，和iss53相互独立，则回退过去，新建一个分叉hotfix/iss53，解决完成后，可以回退到master->iss53这条路线，这是主要工作。
+
+![basic-branching-4](D:\coderoot\learn_git\learn_git_enhanced_images\basic-branching-4.png)
+
+
+
+#### 前后合并：
+
+如果hotfix分支解决的很好，则master分支可以随之移动过去，由于这里是先后继承关系，合并是“快进”的
+
+```
+git checkout master
+git merge hotfix
+```
+
+
+
+
+
+![basic-branching-5](D:\coderoot\learn_git\learn_git_enhanced_images\basic-branching-5.png)
+
+#### 分叉合并：
+
+例如以下状态
+
+![basic-merging-1](D:\coderoot\learn_git\learn_git_enhanced_images\basic-merging-1.png)
+
+当前HEAD处于master分支位于**C4**，还有一个分支iss53**C5**，它们没有先后关系，但是存在一个公共祖先**C2**，这种情景下，我们希望两个分支可以合并。
+
+它们涉及了三个提交结点，两个分支指针。
+
+```
+git checkout master
+git merge iss53
+```
+
+![basic-merging-2](D:\coderoot\learn_git\learn_git_enhanced_images\basic-merging-2.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
