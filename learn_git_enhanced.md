@@ -46,6 +46,8 @@ HEAD：当前状态，本质上是一个指向分支对象的更高级的可移�
 git branch testing 
 
 git branch //列出所有分支，以及当前HEAD所处的分支
+git branch -v //列出分支，以及HEAD位置，还有分支附加信息，包括位于哪个提交结点
+
 git log 也会附带分支信息
 ```
 
@@ -145,7 +147,7 @@ git merge hotfix
 
 ![basic-branching-5](D:\coderoot\learn_git\learn_git_enhanced_images\basic-branching-5.png)
 
-#### 分叉合并：
+#### 分叉无冲突合并：
 
 例如以下状态
 
@@ -161,6 +163,237 @@ git merge iss53
 ```
 
 ![basic-merging-2](D:\coderoot\learn_git\learn_git_enhanced_images\basic-merging-2.png)
+
+合并后，如果没有冲突，则自动创建一个新提交节点，提交结点自带一个merge标签，表明是那两个结点合并而来，不妨称作**merge提交结点**。
+
+
+
+#### 分叉有冲突合并：
+
+在上面的分叉合并中，如果产生冲突，则不会新建提交结点，而是把非冲突文件正常处理，冲突文件在内部按照特定格式展示冲突信息。例如
+
+```
+<<<<<<< HEAD
+this is in main branch
+=======
+this is in testing_conflict branch
+>>>>>>> testing_conflict
+```
+
+使用vimdiff等工具，或者直接修改冲突文件，把那些辅助行都删除后，继续提交
+
+```
+git add *
+git commit -m "message"
+```
+
+则现在得到的仍然是**merge提交结点**。
+
+
+
+
+
+除了合并，还有更高级的变基操作，[Git - 变基 (git-scm.com)](https://git-scm.com/book/zh/v2/Git-分支-变基)
+
+
+
+### 2.4 分支管理
+
+```
+//列出当前所有分支
+git branch 
+git branch -v
+```
+
+
+
+```
+//筛选出，已合并到当前分支的分支列表
+//如果现在是主分支，则列出的都是”死分支“
+git branch --merged
+
+//筛选出，尚未合并到当前分支的分支列表
+//如果现在是主分支，则列出的都是“活分支”
+git branch --no-merged
+
+//删除分支 (不能删除*分支，也就是HEAD所在的当前分支)
+git branch -d test_branch
+//注意，如果想要删除的分支未合并到当前分支，则删除意味着丢失信息，会报错
+//但可以使用 -D 强制删除
+
+```
+
+上述操作都是基于当前分支的视角，如果不想移动，可以使用后缀去查看在那个分支视角下，哪些分支未合并等
+
+```
+git branch --no-merged main //相对于main主分支，哪些分支未合并
+```
+
+
+
+### 2.5 基于分支的开发流
+
+
+
+风格一，长期分支，main标记稳定版，长期滞后于开发，只有在新版本稳定后让main跟上进度。
+
+![lr-branches-1](D:\coderoot\learn_git\learn_git_enhanced_images\lr-branches-1.png)
+
+
+
+风格二，主题分支，以问题或扩展功能为导向，在实现后合并到main中
+
+![topic-branches-1](D:\coderoot\learn_git\learn_git_enhanced_images\topic-branches-1.png)
+
+
+
+## 3. 远程仓库与分支
+
+在远程仓库中，有远程分支，这是在本地无法移动的，在网络通信后，Git会适当移动它们以反映远程仓库状态。（相当于需要联网的书签）
+
+
+
+例如origin/main分支，就是Github仓库的远程分支。
+
+clone行为的本质：
+
+用origin指代远程仓库，拉取所有数据到本地，默认与远程仓库的main分支一样创造一个本地的origin/main分支，同时在本地创造一个main分支，也就是我们所在的并且可以移动的分支。相对的origin/main我们不可以直接移动，只会在联网时基于网络信息发生更改。
+
+![remote-branches-1](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-1.png)
+
+注意：
+
+main是默认主分支，这个可以修改默认名。
+
+origin是默认的远程仓库名称，可以在git clone时添加 -o选项指定远程仓库名不是origin而是其他的。
+
+
+
+### 3.1 git fetch
+
+```
+//git fetch <remote> 具体即
+git fetch origin
+```
+
+表示从远程仓库抓取信息，照着远程仓库的信息延申提交链表，origin/main随之移动。
+
+![remote-branches-3](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-3.png)
+
+很自然的，如果远程仓库发送了别的修改提交，而本地也进行了提交，则会产生分叉。
+
+
+
+除此之外，可以添加多个远程仓库，例如下图
+
+![remote-branches-5](D:\coderoot\learn_git\learn_git_enhanced_images\remote-branches-5.png)
+
+
+
+### 3.2 跟踪分支
+
+远程跟踪分支，例如origin/main，我们有本地的分支“智能地”与之跟踪。
+
+它们称之为“上游分支”和“跟踪分支”，例如origin/main和main。
+
+使用git branch -vv 可以更详细地展示本地分支信息，其中就包括是否是跟踪分支及其上游分支。
+
+```
+$ git branch -vv
+* main             87165d3 [origin/main: ahead 3] 分支冲突合并处理
+  testing_conflict b97efa8 分支冲突测试testing_conflict
+```
+
+
+
+注：clone会自动基于origin/main创造本地分支main，并且设置main跟踪origin/main。
+
+也可以手动设置跟踪分支，
+
+```
+git checkout -b serverfix_local origin/serverfix
+```
+
+这里表示，新建本地分支serverfix_local，用它跟踪远程分支origin/serverfix。
+
+而且存在简写，表示新建本地分支（同名）跟踪这个远程分支。
+
+```
+git checkout --track origin/severfix
+```
+
+甚至更智能的，如果存在远程分支origin/pb，并且不存在本地分支pb，则下面命令自动建立本地分支pb，同时跟踪远程分支origin/pb
+
+```
+git checkout pb
+```
+
+
+
+不是新建本地分支，而是把已有的本地分支pb追踪远程分支origin/pb2，或者修改上游分支，则可以手动设置
+
+```
+git branch --set-upstream-to origin/pb2
+//当前在pb本地分支
+```
+
+
+
+### 3.3 git push
+
+
+
+
+
+### 3.4 git pull
+
+等价于git fetch + git merge，也就是本身自带了合并，而git fetch不尝试合并，会把分叉留给你处理。
+
+对于跟踪分支，它会fetch上游分支到本地，然后merge本地跟踪分支。
+
+pull有些行为不太明确，因此建议单独使用git fetch和git merge
+
+
+
+
+
+### 3.5 本地删除远程分支
+
+```
+git push origin --delete severfix
+```
+
+删除远程仓库的severfix分支
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
