@@ -1,2 +1,17 @@
+# 这是用户级的配置ignore, 现在已经生效的只有ignore子目录
+# 具体的可以复制这个文件到仓库中
+
+# 忽略所有test开头的.exe文件
+test*.exe
+
+# 忽略任何目录下的ignore文件夹
 ignore/
 
+# 忽略当前目录下的TODO文件，不会忽略其他位置的TODO
+/TODO
+
+# 忽略doc目录下的所有.txt文件，但不包括它子目录下的.txt文件
+doc/*.txt
+
+# 忽略dox目录下的所有.pdf文件，以及它的子目录下的.pdf文件
+doc/**/*.pdf

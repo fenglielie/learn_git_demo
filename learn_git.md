@@ -1,12 +1,20 @@
-# Git 学习笔记
+# Git/GitHub 学习笔记
 
-省略了一些最基础的介绍，包括分布式和集中式版本控制的区别，以及Git的优势。
+在这篇笔记中，Git的部分主要参考以下教程，第一个比较硬核：
+
+1. [Git - 关于版本控制 (git-scm.com)](https://git-scm.com/book/zh/v2/起步-关于版本控制)
+
+2. [Git 基础_w3cschool](https://www.w3cschool.cn/isrekq/5vgsrozt.html)
+
+我们省略了一些最基础的介绍，包括分布式和集中式版本控制的区别，以及Git的优势。
 
 
 
+## 1. Git 文件状态
 
+在版本控制中，Git 记录的是文件快照，也就是在.git/objects里面的那些哈希值生成的文件夹和文件，如果未修改，则新版本中只会直接指向旧的。并且与集中式版本控制不同，Git不纠结于具体细节的变化。
 
-## Git 文件状态
+![snapshots](learn_git_images/snapshots.png)
 
 
 
@@ -14,11 +22,34 @@
 
 ![](learn_git_images/git_lifecycle.png)
 
+文件分为四种状态：
+
+1. untracked：未被跟踪的，可能是新发现的文件，
+2. unmodified：已提交的（未修改的），也就是现在Git已经完全记录了这个版本的文件，只能从缓存文件commit 得到
+3. modified：修改的，指的是对已经记录的版本文件，进行了新的修改
+4. staged：缓存的，可以把新文件或者修改后文件使用git add 增加到缓冲区
+
+
+
+对于实践操作中，则主要分成三个区域：
+
+1. 工作区域：也就是真实的目录文件
+2. 缓存区域
+3. 仓库区域
+
+
+
+基本的本地仓库工作流程：
+
+* 在本地目录新建文件（变成未跟踪的），添加到缓存区域（变成缓存的），正式提交到仓库区域（变成已提交的）
+
+* 对于现有的文件（已提交的），在本地目录上对文件直接进行修改（变成修改的），添加到缓存区域（变成缓存的），正式提交到仓库（变成新版本的已提交的）
 
 
 
 
-## Git 初始化设置
+
+## 2. Git 初始化配置
 
 配置目录包括三级，越具体的配置优先级越高，
 
@@ -27,6 +58,8 @@
 * 用户级配置，在~/.gitconfig；
 * 仓库级配置，在.git/config。
 
+
+
 一般在用户级配置中，配置用户名和邮箱
 
 ```
@@ -34,11 +67,11 @@ git config --global user.name "fenglielie"
 git config --global user.email fenglielie@qq.com
 ```
 
-注意，在提交到Github后，只会关注emali，不会关注前面的名称，因此可以用fenglielie(local),fenglielie(tc),fenglielie区分我的不同的提交来源（机器）。
+注意，在提交到Github后，只会关注emali，不会关注前面的名称，因此可以用fenglielie(local)，fenglielie(tc)，fenglielie区分我的不同的提交来源。
 
 
 
-提交信息的文本编辑器，建议使用vim
+提交信息的文本编辑器，建议使用 vim
 
 ```
 git config --global core.editor vim
@@ -50,13 +83,116 @@ git config --global core.editor vim
 git config --global init.defaultbranch main
 ```
 
-
-
-查看配置，重复可能是多级配置文件中的重复项。
+检查配置，重复可能是多级配置文件中的重复项。
 
 ```
 git config --list
 ```
+
+获取帮助
+
+```
+git help <sth>
+git sth --help
+```
+
+
+
+
+
+## 3. Git 建立本地仓库
+
+我们首先不涉及远程操作，针对已有若干文件的非空文件夹project，初始化。
+
+```
+cd project
+git init
+git add *
+git commit -m "initial project"
+```
+
+命令解释：
+
+* git init 初始化，会得到.git隐藏目录
+* git add \* 把所有文件（未追踪的）添加到缓存区（变成缓存的）
+* git commit -m “sth” 把缓存区域的所有文件正式提交（变成已提交的），并且随之附上提交的信息，自动附上提交者的签名（名字，邮箱）
+
+
+
+### 3.1 基本操作
+
+仓库初始化
+
+```
+git init 
+```
+
+检查当前的本地的状态
+
+```
+git status
+```
+
+跟踪新文件（未被跟踪的）到缓存区域（变成缓存的）
+
+```
+git add filename
+git add *
+```
+
+修改文件（已提交的->修改的），放置到缓存区域（变成缓存的）
+
+```
+git add filename
+```
+
+注意：
+
+如果修改文件存在缓存区域中，又继续进行了修改，则现在由三个版本同时存在：
+
+1. 本地目录实在的：第二次修改后的（修改的）
+2. 缓存区域的：第一次修改后的（缓存的）
+3. 仓库区域的：（已提交的）
+
+此时如果直接git commit会把第一次修改后的提交；如果git add 会用第二次修改后的覆盖第一次修改后的，出现在缓存区，再进行git commit提交即可。
+
+
+
+### 3.2 忽略文件
+
+在本地目录下，使用.gitignore文件配置忽略文件，建议在仓库初始化以后立刻添加该文件。
+
+可以设置用户级的默认ignore文件，用户级配置中添加下列选项，并且在对应位置附上ignore格式文件即可。
+
+```
+core.excludesfile = "~/.gitignore_global"
+```
+
+
+
+例如
+
+```
+# 使用井号进行注释
+# 忽略所有.exe结尾的文件
+*.exe
+
+# 忽略任何位置下的build目录，以/结尾表示指定这是个文件夹
+build/
+
+# 忽略当前位置下的TODO文件，以/开头表示指定在当前位置的
+/TODO
+
+# h
+```
+
+
+
+
+
+
+
+
 
 
 
