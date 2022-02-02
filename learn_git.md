@@ -170,20 +170,27 @@ core.excludesfile = "~/.gitignore_global"
 
 
 
-例如
+例如，这是一个仓库级的 ignore 配置
 
 ```
 # 使用井号进行注释
-# 忽略所有.exe结尾的文件
-*.exe
+# 具体的可以复制这个文件到仓库中，这是一个可用的仓库级模板
 
-# 忽略任何位置下的build目录，以/结尾表示指定这是个文件夹
-build/
+# 忽略所有test开头的.exe文件
+test*.exe
 
-# 忽略当前位置下的TODO文件，以/开头表示指定在当前位置的
+# 忽略任何目录下的ignore文件夹
+ignore/
+# build/
+
+# 忽略当前目录下的TODO文件，不会忽略其他位置的TODO
 /TODO
 
-# h
+# 忽略doc目录下的所有.txt文件，但不包括它子目录下的.txt文件
+doc/*.txt
+
+# 忽略dox目录下的所有.pdf文件，以及它的子目录下的.pdf文件
+doc/**/*.pdf
 ```
 
 

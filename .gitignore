@@ -6,6 +6,7 @@ test*.exe
 
 # 忽略任何目录下的ignore文件夹
 ignore/
+# build/
 
 # 忽略当前目录下的TODO文件，不会忽略其他位置的TODO
 /TODO
