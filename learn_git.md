@@ -473,13 +473,53 @@ git tag -a v0 -m "version 0" 53e6d315330de
 
 
 
-### 传递标签到远程仓库
+### 6.3 传递标签到远程仓库
 
 默认情况下，git push不会把标签信息推送到远程仓库，但是可以单独进行
 
 ```
-g
+git push origin v1 //单独传递一个标签v1
+git push origin --tags //推送全部标签，不会区分轻量和附加标签
+
+//这里origin不可省略
+```
+
+注意到，github并没有区分轻量级标签和附加标签，它们都会包含一个信息，对于附加标签是它自己的标签信息，对于轻量标签则是它对应的提交信息。
+
+对于远程仓库的标签，如果需要删除，需要额外的语句
+
+```
+git tag -d v1 //删除本地标签
+git push origin --delete v1 //删除远程标签
 ```
 
 
+
+注：
+
+git支持别名，别名存储在配置文件的alias中，使得频繁的长命令得到简化，例如
+
+```
+git config --global alias.unstage 'reset HEAD --'
+
+//这时，unstage 等价于 reset HEAD --
+
+git reset HEAD -- file1
+git unstage file1 //使用别名的等价用法
+```
+
+
+
+建议使用的别名，存储在本地的用户级配置中
+
+```
+git config --global alias.last 'log -1 HEAD'
+
+//这时，git last 快速查看最后一次提交记录
+//否则 git log 会自动输出很多记录
+```
+
+
+
+基础笔记完成，下一篇是进阶版的。
 
